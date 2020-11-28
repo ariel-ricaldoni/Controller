@@ -1,55 +1,71 @@
-﻿using ControllerLib;
-using ControllerLib.Configurations;
+﻿using ControllerCli.View;
+using ControllerLib;
 using System;
 
 namespace ControllerCli
 {
     public class Command
     {
-        public Command(Configuration configuration)
+        public Command(Configuration configuration, IView view)
         {
-            _controller = new Controller(configuration);
-            _gamepad = new Gamepad();
+            Configuration = configuration;
+
+            _view = view;
         }
 
-        public Exception Exception { get; private set; }
-        public Boolean OnException { get { return Exception != null; } }
+        public Configuration Configuration { get; private set; }
 
-        private Controller _controller { get; set; }
-        private Gamepad _gamepad { get; set; }
+        public IView _view { get; private set; }
+
+        public Boolean OnException { get { return _exception != null; } }
         
-        public void Execute()
-        {          
-            try
-            {               
-                _gamepad.Refresh(_controller.Synchronizer, _controller.Gamepad);
+        private Exception _exception;
 
-                _controller.Execute(View);
+        public void Execute()
+        {
+            try
+            {
+                ExecutionStarted();
             }
             catch (Exception ex)
             {
-                Exception = ex;
+                ExecutionOnError(ex);
             }
             finally
             {
-                _gamepad.Clear();
+                ExecutionEnded();
+            }
+        }
 
-                if (OnException)
+        private void ExecutionStarted()
+        {
+            var controller = new Controller(Configuration.KeyBindings);
+
+            _view.Refresh(controller);
+
+            controller.Invoke(() =>
+            {
+                if (controller.Gamepad.StateChanged)
                 {
-                    Console.WriteLine(Message.Exception(Exception.Message, Exception.InnerException?.Message));
+                    _view.Refresh(controller);
                 }
+            });
+        }
+        private void ExecutionEnded()
+        {
+            _view.Clear();
+
+            if (OnException)
+            {
+                Console.WriteLine($"{Message.AnErrorOccurred}{_exception.ToString()}");
 
                 Console.WriteLine(Message.PressAnyKeyToExit);
                 Console.ReadLine();
-            }        
-        }
-
-        private void View()
-        {
-            if (_controller.Gamepad.StateChanged)
-            {
-                _gamepad.Refresh(_controller.Synchronizer, _controller.Gamepad);
             }
+        }
+        private void ExecutionOnError(Exception ex)
+        {
+            _exception = ex;
         }
     }
 }

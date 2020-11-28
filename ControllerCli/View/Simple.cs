@@ -1,0 +1,49 @@
+﻿using ControllerLib.Input;
+using System;
+
+namespace ControllerCli.View
+{
+    public class Simple : View
+    {
+        protected override void WriteConnectedStateToBuffer()
+        {
+            var BATTERY = String.Empty;
+            switch (BatteryState.Level)
+            {
+                case BatteryLevel.Empty: BATTERY = "000%"; break;
+                case BatteryLevel.Low: BATTERY = "033%"; break;
+                case BatteryLevel.Medium: BATTERY = "066%"; break;
+                case BatteryLevel.Full: BATTERY = "100%"; break;
+            }
+
+            var FPS = RefreshRate.ToString("D3");
+            var INPUT_LOCK = IsEnabled ? "OFF" : "ON ";
+            var MODE = (ModeName.Length > 3 ? ModeName.Substring(0, 3) : ModeName.PadLeft(3, ' ')).ToUpper();
+
+            _buffer = $@"Xbox Controller connected.                                 
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+ ■■■■■■ FPS: {FPS} | BAT: {BATTERY} | LOCK: {INPUT_LOCK} | MODE: {MODE} ■■■■■■
+";
+        }
+    }
+}

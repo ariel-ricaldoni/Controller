@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControllerCli.View;
+using System;
 
 namespace ControllerCli
 {
@@ -16,21 +17,25 @@ namespace ControllerCli
             try
             {
                 Console.Title = Message.ControllerNameAndVersion;
+
+                Console.CursorVisible = false;
                 Console.SetWindowSize(60, 28);
                 Console.SetBufferSize(60, 28);
 
-                Console.WriteLine(Message.Header());
+                Console.WriteLine($"{Message.ControllerNameAndVersion}{Environment.NewLine}");
 
                 var configuration = ConfigurationFactory.GetConfiguration();
 
-                var command = new Command(configuration);
+                var view = ViewFactory.GetView(configuration.View);
+
+                var command = new Command(configuration, view);
                 command.Execute();
 
                 return command.OnException ? (Int32)ExitCodes.ExecutionError : (Int32)ExitCodes.Success;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(Message.Exception(ex.Message, ex.InnerException?.Message));
+                Console.WriteLine($"{Message.AnErrorOccurred}{ex.ToString()}");
                 Console.ReadLine();
 
                 return (Int32)ExitCodes.StartupError;
