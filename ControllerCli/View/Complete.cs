@@ -5,7 +5,7 @@ namespace ControllerCli.View
 {
     public class Complete : View
     {
-        protected override void WriteConnectedStateToBuffer()
+        protected override void WriteConnectedState()
         {
             var BATTERY = String.Empty; var BATTERY_______ = String.Empty;
             switch (BatteryState.Level)
@@ -55,7 +55,7 @@ namespace ControllerCli.View
             var RT_ = InputState.RTPressed > 127 ? "11111" : "00000";
             var RT__ = InputState.RTPressed > 254 ? "111111" : "000000";
 
-            _buffer = $@"Xbox Controller connected.                                 
+            _view = $@"Xbox Controller connected.                                 
                                                            
         {LT}                                    {RT}       
        {LT_}         +{BATTERY_______}+         {RT_}      
@@ -78,6 +78,60 @@ namespace ControllerCli.View
                                                            
                                                            
  ■■■■■■ FPS: {FPS} | BAT: {BATTERY} | LOCK: {INPUT_LOCK} | MODE: {MODE} ■■■■■■
+";
+        }
+        protected override void WriteDisconnectedState()
+        {
+            _view = $@"Xbox Controller disconnected.                              
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+";
+        }
+        protected override void ClearView()
+        {
+            _view = $@"                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
 ";
         }
     }

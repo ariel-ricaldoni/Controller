@@ -11,30 +11,69 @@ namespace ControllerLib.Driver
 
     public interface IUser32
     {
-        Int32 GetMarshalSizeOf(Type type);
-
-        UInt32 SendInputWrapper(UInt32 nInputs, INPUT[] pInputs, Int32 cbSize);
-        UInt32 MapVirtualKeyWrapper(UInt32 uCode, UInt32 uMapType);
+        UInt32 SendKeyboardInput(UInt16 key, UInt32 flag);
+        UInt32 SendMouseInput(UInt32 flag, Int32 speedX, Int32 speedY);
+        UInt32 SendMouseInput(UInt32 flag, UInt32 speed);
+        UInt32 SendMouseInput(UInt32 flag);
     }
 
-    public class User32 : Driver, IUser32
+    public class User32 : IUser32
     {
-        public UInt32 SendInputWrapper(UInt32 nInputs, INPUT[] pInputs, Int32 cbSize)
+        public UInt32 SendKeyboardInput(UInt16 key, UInt32 flag)
         {
-            return SendInput(nInputs, pInputs, cbSize);
+            var input = new INPUT();
+            input.Type = (Int32)InputType.Keyboard;
+            input.Data.Keyboard.Vk = key;
+            input.Data.Keyboard.Flags = flag;
+            input.Data.Keyboard.Scan = (UInt16)(MapVirtualKey((UInt32)key, 0) & 0xFFU);
+            input.Data.Keyboard.Time = 0;
+            input.Data.Keyboard.ExtraInfo = IntPtr.Zero;
+
+            return SendInputs(new INPUT[] { input });
+        }
+        public UInt32 SendMouseInput(UInt32 flag, Int32 speedX, Int32 speedY)
+        {
+            var input = new INPUT();
+            input.Type = (Int32)InputType.Mouse;
+            input.Data.Mouse.X = speedX;
+            input.Data.Mouse.Y = speedY;
+            input.Data.Mouse.Flags = flag;
+            input.Data.Mouse.Time = 0;
+            input.Data.Mouse.ExtraInfo = IntPtr.Zero;
+
+            return SendInputs(new INPUT[] { input });
+        }
+        public UInt32 SendMouseInput(UInt32 flag, UInt32 speed)
+        {
+            var input = new INPUT();
+            input.Type = (Int32)InputType.Mouse;
+            input.Data.Mouse.MouseData = speed;
+            input.Data.Mouse.Flags = flag;
+            input.Data.Mouse.Time = 0;
+            input.Data.Mouse.ExtraInfo = IntPtr.Zero;
+
+            return SendInputs(new INPUT[] { input });
+        }
+        public UInt32 SendMouseInput(UInt32 flag)
+        {
+            var input = new INPUT();
+            input.Type = (Int32)InputType.Mouse;
+            input.Data.Mouse.Flags = flag;
+            input.Data.Mouse.Time = 0;
+            input.Data.Mouse.ExtraInfo = IntPtr.Zero;
+
+            return SendInputs(new INPUT[] { input });
         }
 
-        public UInt32 MapVirtualKeyWrapper(UInt32 uCode, UInt32 uMapType)
+        [DllImport("user32.dll")]
+        private static extern UInt32 SendInput(UInt32 nInputs, INPUT[] pInputs, Int32 cbSize);
+        [DllImport("user32.dll")]
+        private static extern UInt32 MapVirtualKey(UInt32 uCode, UInt32 uMapType);
+
+        private UInt32 SendInputs(INPUT[] inputs)
         {
-            return MapVirtualKey(uCode, uMapType);
+            return SendInput((UInt32)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
         }
-
-
-        [DllImport("user32.dll")]
-        public static extern UInt32 SendInput(UInt32 nInputs, INPUT[] pInputs, Int32 cbSize);
-
-        [DllImport("user32.dll")]
-        public static extern UInt32 MapVirtualKey(UInt32 uCode, UInt32 uMapType);
     }
 
     [StructLayout(LayoutKind.Sequential)]

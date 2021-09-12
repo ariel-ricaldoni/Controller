@@ -39,32 +39,25 @@ namespace ControllerLib.Input
         }
 
         public UInt32 PacketNumber { get; private set; } = 0;
-
         public Int16 ButtonPressCount { get; private set; } = 0;
-
         public Int16 LeftAnalogX { get; private set; } = 0;
         public Int16 LeftAnalogY { get; private set; } = 0;
         public Boolean LeftAnalogPressed { get; private set; } = false;
-
         public Int16 RightAnalogX { get; private set; } = 0;
         public Int16 RightAnalogY { get; private set; } = 0;
         public Boolean RightAnalogPressed { get; private set; } = false;
-
         public Boolean UpPressed { get; private set; } = false;
         public Boolean DownPressed { get; private set; } = false;
         public Boolean LeftPressed { get; private set; } = false;
         public Boolean RightPressed { get; private set; } = false;
-
         public Boolean APressed { get; private set; } = false;
         public Boolean BPressed { get; private set; } = false;
         public Boolean XPressed { get; private set; } = false;
         public Boolean YPressed { get; private set; } = false;
-
         public Boolean LBPressed { get; private set; } = false;
         public byte LTPressed { get; private set; } = 0;
         public Boolean RBPressed { get; private set; } = false;
         public byte RTPressed { get; private set; } = 0;
-
         public Boolean StartPressed { get; private set; } = false;
         public Boolean BackPressed { get; private set; } = false;
 

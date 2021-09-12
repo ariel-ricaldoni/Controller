@@ -36,28 +36,27 @@ namespace ControllerCli.View
 
     public abstract class View : IView
     {
+        public virtual void Refresh(Controller state)
+        {
+            ReadControllerState(state);
+
+            RefreshView();
+            Render();
+        }
+        public virtual void Clear()
+        {
+            ClearView();
+            Render();
+        }
+
         protected String ModeName { get; set; }
         protected Int32 RefreshRate { get; set; }
         protected Boolean IsConnected { get; set; }
         protected Boolean IsEnabled { get; set; }
         protected InputState InputState { get; set; }
         protected BatteryState BatteryState { get; set; }
-
-        protected String _buffer { get; set; }
-
-        public virtual void Refresh(Controller state)
-        {
-            ReadControllerState(state);
-
-            RefreshBuffer();
-            Render();
-        }
-        public virtual void Clear()
-        {
-            ClearBuffer();
-            Render();
-        }
-
+        protected String _view { get; set; }
+   
         protected virtual void ReadControllerState(Controller state)
         {
             RefreshRate = state.Synchronizer.RefreshRate;
@@ -67,106 +66,35 @@ namespace ControllerCli.View
             InputState = state.Gamepad.InputState;
             BatteryState = state.Gamepad.BatteryState;
         }
-        protected void RefreshBuffer()
+        protected virtual void WriteConnectedState()
+        {
+            _view = $@"Xbox Controller connected.                                 ";
+        }
+        protected virtual void WriteDisconnectedState()
+        {
+            _view = $@"Xbox Controller disconnected.                              ";
+        }
+        protected virtual void ClearView()
+        {
+            _view = $@"                                                           ";
+        }
+        protected void RefreshView()
         {
             if (IsConnected)
             {
-                WriteConnectedStateToBuffer();
+                WriteConnectedState();
             }
             else
             {
-                WriteDisconnectedStateToBuffer();
+                WriteDisconnectedState();
             }
         }
-        protected virtual void WriteConnectedStateToBuffer()
-        {
-            _buffer = $@"Xbox Controller connected.                                 
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-";
-        }
-        protected virtual void WriteDisconnectedStateToBuffer()
-        {
-            _buffer = $@"Xbox Controller disconnected.                              
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-";
-        }
-
-        protected void ClearBuffer()
-        {
-            _buffer = $@"                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-";
-        }
-
         protected void Render()
         {
             Int32 currentLineCursor = Console.CursorTop;
 
             Console.SetCursorPosition(0, currentLineCursor);
-            Console.WriteLine(_buffer);
+            Console.WriteLine(_view);
             Console.SetCursorPosition(0, currentLineCursor);
 
             GC.Collect();

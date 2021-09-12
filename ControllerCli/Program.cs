@@ -17,15 +17,11 @@ namespace ControllerCli
             try
             {
                 Console.Title = Message.ControllerNameAndVersion;
-
-                Console.CursorVisible = false;
-                Console.SetWindowSize(60, 28);
-                Console.SetBufferSize(60, 28);
-
                 Console.WriteLine($"{Message.ControllerNameAndVersion}{Environment.NewLine}");
 
+                TryConfigureConsoleWindow();
+         
                 var configuration = ConfigurationFactory.GetConfiguration();
-
                 var view = ViewFactory.GetView(configuration.View);
 
                 var command = new Command(configuration, view);
@@ -35,10 +31,24 @@ namespace ControllerCli
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{Message.AnErrorOccurred}{ex.ToString()}");
+                Console.WriteLine($"{Message.AnErrorOccurred}{ex}");
                 Console.ReadLine();
 
                 return (Int32)ExitCodes.StartupError;
+            }
+        }
+
+        private static void TryConfigureConsoleWindow()
+        {
+            try
+            {
+                Console.CursorVisible = false;
+                Console.SetWindowSize(60, 28);
+                Console.SetBufferSize(60, 28);
+            }
+            catch
+            {
+
             }
         }
     }

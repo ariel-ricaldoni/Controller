@@ -5,7 +5,7 @@ namespace ControllerCli.View
 {
     public class Simple : View
     {
-        protected override void WriteConnectedStateToBuffer()
+        protected override void WriteConnectedState()
         {
             var BATTERY = String.Empty;
             switch (BatteryState.Level)
@@ -20,29 +20,23 @@ namespace ControllerCli.View
             var INPUT_LOCK = IsEnabled ? "OFF" : "ON ";
             var MODE = (ModeName.Length > 3 ? ModeName.Substring(0, 3) : ModeName.PadLeft(3, ' ')).ToUpper();
 
-            _buffer = $@"Xbox Controller connected.                                 
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
-                                                           
+            _view = $@"Xbox Controller connected.                                 
                                                            
  ■■■■■■ FPS: {FPS} | BAT: {BATTERY} | LOCK: {INPUT_LOCK} | MODE: {MODE} ■■■■■■
+";
+        }
+        protected override void WriteDisconnectedState()
+        {
+            _view = $@"Xbox Controller disconnected.                              
+                                                           
+                                                           
+";
+        }
+        protected override void ClearView()
+        {
+            _view = $@"                                                           
+                                                           
+                                                           
 ";
         }
     }

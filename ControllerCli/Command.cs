@@ -13,13 +13,8 @@ namespace ControllerCli
             _view = view;
         }
 
-        public Configuration Configuration { get; private set; }
-
-        public IView _view { get; private set; }
-
         public Boolean OnException { get { return _exception != null; } }
-        
-        private Exception _exception;
+        public Configuration Configuration { get; private set; }
 
         public void Execute()
         {
@@ -37,6 +32,9 @@ namespace ControllerCli
             }
         }
 
+        private IView _view { get; set; }
+        private Exception _exception;
+   
         private void ExecutionStarted()
         {
             var controller = new Controller(Configuration.KeyBindings);

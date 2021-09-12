@@ -177,7 +177,7 @@ namespace ControllerLib.Output
             _driver = driver;
         }
 
-        public const Int32 DefaultKeyDownDelay = 20;
+        public const Int32 DefaultKeyDownDelay = 30;
         public const Int32 MinKeyDownDelayLimit = 0;
         public const Int32 MaxKeyDownDelayLimit = 144;
 
@@ -188,57 +188,11 @@ namespace ControllerLib.Output
         }
         public Int32 KeyDown { get; private set; } = 0;
 
-        private Int32 _keyDownDelay = DefaultKeyDownDelay;
-
-        private IUser32 _driver { get; set; }
-
-        public void Press(KeyboardKeyInput keyInput)
-        {
-            var key = (UInt16)keyInput.KeyCode;
-            var flag = (UInt32)keyInput.KeyFlagDown;
-
-            var input = new INPUT();
-            input.Type = (Int32)InputType.Keyboard;
-            input.Data.Keyboard.Vk = key;
-            input.Data.Keyboard.Scan = (UInt16)(_driver.MapVirtualKeyWrapper((UInt32)key, 0) & 0xFFU);
-            input.Data.Keyboard.Flags = flag;
-            input.Data.Keyboard.Time = 0;
-            input.Data.Keyboard.ExtraInfo = IntPtr.Zero;
-
-            var inputs = new INPUT[] { input };
-            _driver.SendInputWrapper((UInt32)inputs.Length, inputs, _driver.GetMarshalSizeOf(typeof(INPUT)));
-        }
-        public void Release(KeyboardKeyInput keyInput)
-        {
-            var key = (UInt16)keyInput.KeyCode;
-            var flag = (UInt32)keyInput.KeyFlagUp;
-
-            var input = new INPUT();
-            input.Type = (Int32)InputType.Keyboard;
-            input.Data.Keyboard.Vk = key;
-            input.Data.Keyboard.Scan = (UInt16)(_driver.MapVirtualKeyWrapper((UInt32)key, 0) & 0xFFU);
-            input.Data.Keyboard.Flags = flag;
-            input.Data.Keyboard.Time = 0;
-            input.Data.Keyboard.ExtraInfo = IntPtr.Zero;
-
-            var inputs = new INPUT[] { input };
-            _driver.SendInputWrapper((UInt32)inputs.Length, inputs, _driver.GetMarshalSizeOf(typeof(INPUT)));
-        }
-
-        public void AddKeyDown()
-        {
-            if (KeyDown < KeyDownDelay) KeyDown++;
-        }
-        public void ResetKeyDown()
-        {
-            KeyDown = 0;
-        }
-
-        public static KeyboardKeyFlag GetKeyFlagFromKeyCode(KeyboardKeyCode code, Boolean isDown)
+        public static KeyboardKeyFlag GetKeyFlagFromKeyCode(KeyboardKeyCode code, Boolean isKeyDown)
         {
             var isExtendedKey = Enum.IsDefined(typeof(ExtendedKeyCode), (Int32)code);
 
-            if (isDown)
+            if (isKeyDown)
             {
                 return isExtendedKey ? KeyboardKeyFlag.ExtendedKey : KeyboardKeyFlag.KeyDown;
             }
@@ -247,6 +201,26 @@ namespace ControllerLib.Output
                 return isExtendedKey ? KeyboardKeyFlag.ExtendedKey | KeyboardKeyFlag.KeyUp : KeyboardKeyFlag.KeyUp;
             }
         }
+
+        public void Press(KeyboardKeyInput keyInput)
+        {
+            _driver.SendKeyboardInput((UInt16)keyInput.KeyCode, (UInt32)keyInput.KeyFlagDown);
+        }
+        public void Release(KeyboardKeyInput keyInput)
+        {
+            _driver.SendKeyboardInput((UInt16)keyInput.KeyCode, (UInt32)keyInput.KeyFlagUp);
+        }
+        public void AddKeyDown()
+        {
+            if (KeyDown < KeyDownDelay) KeyDown++;
+        }
+        public void ResetKeyDown()
+        {
+            KeyDown = 0;
+        }
+    
+        private Int32 _keyDownDelay = DefaultKeyDownDelay;
+        private IUser32 _driver { get; set; }
     }
 
     public class KeyboardKeyInput : IButtonInput

@@ -56,84 +56,7 @@ namespace ControllerLib.Output
             get { return _scrollSpeedMultiplier; }
             set { _scrollSpeedMultiplier = (value < MinScrollSpeedMultiplierLimit ? MinScrollSpeedMultiplierLimit : (value > MaxScrollSpeedMultiplierLimit ? MaxScrollSpeedMultiplierLimit : value)); }
         }
-
-        private Int32 _cursorMaxSpeed = DefaultMaxCursorSpeed;
-        private Int32 _scrollSpeedMultiplier = DefaultScrollSpeedMultiplier;
-
-        private IUser32 _driver;
-
-        public void Move(Int32 speedX, Int32 speedY)
-        {
-            var flag = (UInt32)MouseKeyFlag.MouseMoved;
-
-            var input = new INPUT();
-            input.Type = (Int32)InputType.Mouse;
-            input.Data.Mouse.X = speedX;
-            input.Data.Mouse.Y = speedY;
-            input.Data.Mouse.Flags = flag;
-            input.Data.Mouse.Time = 0;
-            input.Data.Mouse.ExtraInfo = IntPtr.Zero;
-
-            var inputs = new INPUT[] { input };
-            _driver.SendInputWrapper((UInt32)inputs.Length, inputs, _driver.GetMarshalSizeOf(typeof(INPUT)));
-        }
-        public void Scroll(UInt32 speed)
-        {
-            var flag = (UInt32)MouseKeyFlag.WheelMoved;
-
-            var input = new INPUT();
-            input.Type = (Int32)InputType.Mouse;
-            input.Data.Mouse.MouseData = speed;
-            input.Data.Mouse.Flags = flag;
-            input.Data.Mouse.Time = 0;
-            input.Data.Mouse.ExtraInfo = IntPtr.Zero;
-
-            var inputs = new INPUT[] { input };
-            _driver.SendInputWrapper((UInt32)inputs.Length, inputs, _driver.GetMarshalSizeOf(typeof(INPUT)));
-        }
-        public void Press(MouseKeyInput keyInput)
-        {
-            var flag = (UInt32)keyInput.KeyFlagDown;
-
-            var input = new INPUT();
-            input.Type = (Int32)InputType.Mouse;
-            input.Data.Mouse.Flags = flag;
-            input.Data.Mouse.Time = 0;
-            input.Data.Mouse.ExtraInfo = IntPtr.Zero;
-
-            var inputs = new INPUT[] { input };
-            _driver.SendInputWrapper((UInt32)inputs.Length, inputs, _driver.GetMarshalSizeOf(typeof(INPUT)));
-        }
-        public void Release(MouseKeyInput keyInput)
-        {
-            var flag = (UInt32)keyInput.KeyFlagUp;
-
-            var input = new INPUT();
-            input.Type = (Int32)InputType.Mouse;
-            input.Data.Mouse.Flags = flag;
-            input.Data.Mouse.Time = 0;
-            input.Data.Mouse.ExtraInfo = IntPtr.Zero;
-
-            var inputs = new INPUT[] { input };
-            _driver.SendInputWrapper((UInt32)inputs.Length, inputs, _driver.GetMarshalSizeOf(typeof(INPUT)));
-        }
-
-        public Int32 GetCursorSpeed(Int32 value, Int32 minLimit, Int32 minDeadZone, Int32 maxLimit, Int32 maxDeadZone)
-        {
-            if (value > maxDeadZone)
-            {
-                return CalculateCursorSpeed(value, maxLimit, maxDeadZone, CursorMaxSpeed);
-            }
-            else if (value < minDeadZone)
-            {
-                return CalculateCursorSpeed(value, minLimit, minDeadZone, -CursorMaxSpeed);
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
+        
         public static MouseKeyFlag GetKeyFlagFromKeyCode(MouseKeyCode code, Boolean isDown)
         {
             switch (code)
@@ -152,9 +75,45 @@ namespace ControllerLib.Output
             }
         }
 
-        private Int32 CalculateCursorSpeed(Int32 value, Int32 limit, Int32 deadZone, Int32 speedLimit)
+        public void Move(Int32 speedX, Int32 speedY)
         {
-            return (value - deadZone) * speedLimit / (limit - deadZone);
+            _driver.SendMouseInput((UInt32)MouseKeyFlag.MouseMoved, speedX, speedY);
+        }
+        public void Scroll(UInt32 speed)
+        {
+            _driver.SendMouseInput((UInt32)MouseKeyFlag.WheelMoved, speed);
+        }
+        public void Press(MouseKeyInput keyInput)
+        {
+            _driver.SendMouseInput((UInt32)keyInput.KeyFlagDown);
+        }
+        public void Release(MouseKeyInput keyInput)
+        {
+            _driver.SendMouseInput((UInt32)keyInput.KeyFlagUp);
+        }
+        public Int32 GetCursorSpeed(Int32 value, Int32 minLimit, Int32 minDeadZone, Int32 maxLimit, Int32 maxDeadZone)
+        {
+            if (value > maxDeadZone)
+            {
+                return CalculateCursorSpeed(value, maxLimit, maxDeadZone, CursorMaxSpeed);
+            }
+            else if (value < minDeadZone)
+            {
+                return CalculateCursorSpeed(value, minLimit, minDeadZone, -CursorMaxSpeed);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private Int32 _cursorMaxSpeed = DefaultMaxCursorSpeed;
+        private Int32 _scrollSpeedMultiplier = DefaultScrollSpeedMultiplier;
+        private IUser32 _driver;
+
+        private Int32 CalculateCursorSpeed(Int32 value, Int32 limit, Int32 deadZone, Int32 maxSpeed)
+        {
+            return (value - deadZone) * maxSpeed / (limit - deadZone);
         }
     }
 

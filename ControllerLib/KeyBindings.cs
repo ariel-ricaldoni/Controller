@@ -17,13 +17,10 @@ namespace ControllerLib
         }
 
         public KeyBinding Current { get { return GetCurrent(); } }
-
         public Int32 CurrentIndex { get; private set; } = 0;
         public Int32 MinIndex { get { return 0; } }
         public Int32 MaxIndex { get { return _keyBindings.Count - 1; } }
         public Int32 Count { get { return _keyBindings.Count; } }
-
-        private IList<KeyBinding> _keyBindings { get; set; }
 
         public KeyBinding GetCurrent()
         {
@@ -35,6 +32,8 @@ namespace ControllerLib
 
             CurrentIndex = index;
         }
+
+        private IList<KeyBinding> _keyBindings { get; set; }
     }
 
     public class KeyBinding

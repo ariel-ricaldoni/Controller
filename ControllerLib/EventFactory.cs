@@ -9,7 +9,6 @@ namespace ControllerLib
         InternalEventHandler GetInputLockEvent(KeyBindings keyBindings, Gamepad gamepad);
         InternalEventHandler GetApplyNextKeyBindingEvent(KeyBindings keyBindings, Gamepad gamepad, Action applyNextAction);
         InternalEventHandler GetApplyPreviousKeyBindingEvent(KeyBindings keyBindings, Gamepad gamepad, Action applyPreviousAction);
-
         AnalogEventHandler GetGamepadAnalogEvent(IAnalogInput input, KeyBindings keyBindings, Gamepad gamepad, Mouse mouse, Keyboard keyboard);
         ButtonEventHandler GetGamepadButtonEvent(IButtonInput input, KeyBindings keyBindings, Gamepad gamepad, Mouse mouse, Keyboard keyboard);
     }
@@ -89,7 +88,6 @@ namespace ControllerLib
                 }
             };
         }
-
         public AnalogEventHandler GetGamepadAnalogEvent(IAnalogInput input, KeyBindings keyBindings, Gamepad gamepad, Mouse mouse, Keyboard keyboard)
         {
             if (input is CursorInput)
@@ -109,6 +107,30 @@ namespace ControllerLib
                 return null;
             }
         }
+        public ButtonEventHandler GetGamepadButtonEvent(IButtonInput input, KeyBindings keyBindings, Gamepad gamepad, Mouse mouse, Keyboard keyboard)
+        {
+            if (input is MouseKeyInput)
+            {
+                return MouseEventHandler(input as MouseKeyInput, mouse);
+            }
+            else if (input is MouseMacroInput)
+            {
+                return MouseMacroEventHandler(input as MouseMacroInput);
+            }
+            else if (input is KeyboardKeyInput)
+            {
+                return KeyboardEventHandler(input as KeyboardKeyInput, keyboard);
+            }
+            else if (input is KeyboardMacroInput)
+            {
+                return KeyboardMacroEventHandler(input as KeyboardMacroInput, gamepad, keyboard);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private AnalogEventHandler CursorEventHandler(CursorInput input, Mouse mouse)
         {
             return (stateX, stateY, previousStateX, previousStateY) =>
@@ -177,30 +199,6 @@ namespace ControllerLib
                     keyboard.Release(input.UpKey);
                 }
             };
-        }
-
-        public ButtonEventHandler GetGamepadButtonEvent(IButtonInput input, KeyBindings keyBindings, Gamepad gamepad, Mouse mouse, Keyboard keyboard)
-        {
-            if (input is MouseKeyInput)
-            {
-                return MouseEventHandler(input as MouseKeyInput, mouse);
-            }
-            else if (input is MouseMacroInput)
-            {
-                return MouseMacroEventHandler(input as MouseMacroInput);
-            }
-            else if (input is KeyboardKeyInput)
-            {
-                return KeyboardEventHandler(input as KeyboardKeyInput, keyboard);
-            }
-            else if (input is KeyboardMacroInput)
-            {
-                return KeyboardMacroEventHandler(input as KeyboardMacroInput, gamepad, keyboard);
-            }
-            else
-            {
-                return null;
-            }
         }
         private ButtonEventHandler MouseEventHandler(MouseKeyInput input, Mouse mouse)
         {

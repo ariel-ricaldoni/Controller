@@ -77,10 +77,8 @@ namespace ControllerLib
         }
 
         public IEventFactory EventFactory { get; private set; }
-
         public KeyBindings KeyBindings { get; private set; }
         public Synchronizer Synchronizer { get; private set; }
-
         public Gamepad Gamepad { get; private set; }
         public Mouse Mouse { get; private set; }
         public Keyboard Keyboard { get; private set; }
@@ -116,7 +114,6 @@ namespace ControllerLib
                 }
             });
         }
-
         public void ApplyCurrentKeyBinding()
         {
             var keyBinding = KeyBindings.GetCurrent();
