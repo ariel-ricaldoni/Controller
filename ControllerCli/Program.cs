@@ -17,38 +17,32 @@ namespace ControllerCli
             try
             {
                 Console.Title = Message.ControllerNameAndVersion;
-                Console.WriteLine($"{Message.ControllerNameAndVersion}{Environment.NewLine}");
 
-                TryConfigureConsoleWindow();
-         
                 var configuration = ConfigurationFactory.GetConfiguration();
-                var view = ViewFactory.GetView(configuration.View);
+                var view = ViewFactory.GetView(configuration.View, configuration.ResizeWindow);
 
                 var command = new Command(configuration, view);
                 command.Execute();
 
                 return command.OnException ? (Int32)ExitCodes.ExecutionError : (Int32)ExitCodes.Success;
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                Console.WriteLine($"{Message.AnErrorOccurred}{ex}");
+                Console.WriteLine($"{Message.AnErrorOccurred}{ex.Message}");
+
+                Console.WriteLine(Message.PressAnyKeyToExit);
                 Console.ReadLine();
 
                 return (Int32)ExitCodes.StartupError;
             }
-        }
-
-        private static void TryConfigureConsoleWindow()
-        {
-            try
+            catch (Exception ex)
             {
-                Console.CursorVisible = false;
-                Console.SetWindowSize(60, 28);
-                Console.SetBufferSize(60, 28);
-            }
-            catch
-            {
+                Console.WriteLine($"{Message.AnErrorOccurred}{ex}");
 
+                Console.WriteLine(Message.PressAnyKeyToExit);
+                Console.ReadLine();
+
+                return (Int32)ExitCodes.ExecutionError;
             }
         }
     }

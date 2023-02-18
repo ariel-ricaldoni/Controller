@@ -32,7 +32,7 @@ namespace ControllerLib.Input
         public Boolean IsConnected { get { return InputState?.PacketNumber > 0; } }
         public Boolean IsEnabled { get; private set; } = true;
         public Boolean PreviousIsEnabled { get; private set; } = false;
-        public Boolean StateChanged { get { return !BatteryState.Equals(PreviousBatteryState) || !InputState.Equals(PreviousInputState); } }   
+        public Boolean StateChanged { get { return !BatteryState.Equals(PreviousBatteryState) || !InputState.Equals(PreviousInputState); } }
         public Int32 KeyDownDelay
         {
             get { return _keyDownDelay; }
@@ -134,7 +134,7 @@ namespace ControllerLib.Input
         {
             KeyDown = 0;
         }
-        
+
         private readonly UInt32 _dwUserIndex = 0;
         private readonly Byte _devType = new Byte();
         private Int32 _keyDownDelay = DefaultKeyDownDelay;

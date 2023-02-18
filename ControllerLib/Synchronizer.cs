@@ -59,7 +59,7 @@ namespace ControllerLib
         private Int32 _sleepTime { get; set; } = 15;
         private Int32 _iterations { get; set; } = 0;
         private Timer _timer { get; set; }
- 
+
         private void AddIteration()
         {
             if (_iterations < Int32.MaxValue) _iterations++;

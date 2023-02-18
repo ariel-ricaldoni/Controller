@@ -1,6 +1,6 @@
 # Controller
 
-Controller is a console application that allows you to control the mouse and keyboard on a Windows machine through an Xbox 360/One controller. It also allows you to customize the key bindings for all the buttons available on the Xbox 360/One controller.
+Controller is a console application that allows you to control mouse and keyboard inputs on a Windows machine through a Xbox gamepad. It also allows you to customize the key bindings for all the buttons available on the Xbox gamepad.
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ Download or clone this repository and load it into either Visual Studio 2019 or 
 
 ## Prerequisites
 
-To build this project you must have .NET Core 3.1 SDK installed on the development machine and either Visual Studio 2019 or Visual Studio Code. The Xbox Controller driver xinput1_4.dll must also be available on the development machine.
+To build this project you must have .NET Core 3.1 SDK installed on the development machine and either Visual Studio 2019 or Visual Studio Code. The Xbox gamepad driver xinput1_4.dll must also be available on the development machine.
 
 ## Deployment
 
@@ -16,9 +16,21 @@ Once the project is published you may place the binaries wherever you want. In o
 
 ## Observation
 
-If you do not wish to build the application yourself, you may try it by download the Controller.zip file. It contains the latest self contained build.
+If you do not want to build the application yourself, you may try it by download the Controller.zip file. It contains the latest self contained build.
+
+## Known Issues
+
+* Xbox Series gamepads won't display the battery percentage on wireless mode.
 
 ## Change Log
+
+* [v1.0.0.7] - 2023/02/18
+	* Code refactoring
+	* Keyboard macros implemented 
+	* Minor changes to the "Complete" View option
+	* Simple View option renamed to Basic
+	* Newtonsoft.Json version upgraded to 13.0.2
+	* Readme and Configuration revision
 
 * [v1.0.0.6] - 2021/09/12
 	* Code refactoring to make it easier for unit tests (unit tests to come on future releases)

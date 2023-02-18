@@ -3,8 +3,16 @@ using System;
 
 namespace ControllerCli.View
 {
-    public class Simple : View
+    public class Basic : View
     {
+        public Basic(Boolean resizeWindow = false)
+        {
+            if (resizeWindow)
+            {
+                try { Console.CursorVisible = false; Console.SetWindowSize(60, 7); Console.SetBufferSize(60, 7); } catch { }
+            }
+        }
+
         protected override void WriteConnectedState()
         {
             var BATTERY = String.Empty;

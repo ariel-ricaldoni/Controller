@@ -23,10 +23,6 @@ namespace ControllerLib.Output
         MouseMoved = 0x0001,
         WheelMoved = 0x0800
     }
-    public enum MouseMacro
-    {
-
-    }
 
     public class Mouse
     {
@@ -56,7 +52,7 @@ namespace ControllerLib.Output
             get { return _scrollSpeedMultiplier; }
             set { _scrollSpeedMultiplier = (value < MinScrollSpeedMultiplierLimit ? MinScrollSpeedMultiplierLimit : (value > MaxScrollSpeedMultiplierLimit ? MaxScrollSpeedMultiplierLimit : value)); }
         }
-        
+
         public static MouseKeyFlag GetKeyFlagFromKeyCode(MouseKeyCode code, Boolean isDown)
         {
             switch (code)
@@ -119,6 +115,10 @@ namespace ControllerLib.Output
 
     public class MouseKeyInput : IButtonInput
     {
+        public MouseKeyInput()
+        {
+
+        }
         public MouseKeyInput(MouseKeyCode keyCode)
         {
             KeyCode = (UInt32)keyCode;
@@ -130,29 +130,12 @@ namespace ControllerLib.Output
         public UInt32 KeyFlagDown { get; set; }
         public UInt32 KeyFlagUp { get; set; }
     }
-    public class MouseMacroInput : IButtonInput
-    {
-        public MouseMacroInput(MouseMacro macro)
-        {
-            Macro = macro;
-        }
-
-        public MouseMacro Macro { get; set; }
-    }
     public class CursorInput : IAnalogInput
     {
         public CursorInput()
         {
 
         }
-        public CursorInput(Boolean invertX, Boolean invertY)
-        {
-            InvertX = invertX;
-            InvertY = invertY;
-        }
-
-        public Boolean InvertX { get; set; } = false;
-        public Boolean InvertY { get; set; } = false;
     }
     public class ScrollInput : IAnalogInput
     {
@@ -160,11 +143,5 @@ namespace ControllerLib.Output
         {
 
         }
-        public ScrollInput(Boolean invertY)
-        {
-            InvertY = invertY;
-        }
-
-        public Boolean InvertY { get; set; } = false;
     }
 }

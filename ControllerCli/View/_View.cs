@@ -7,7 +7,7 @@ namespace ControllerCli.View
     public enum ViewType
     {
         Complete,
-        Simple,
+        Basic,
         None
     }
 
@@ -19,15 +19,15 @@ namespace ControllerCli.View
 
     public static class ViewFactory
     {
-        public static IView GetView(ViewType type)
+        public static IView GetView(ViewType type, Boolean resizeWindow)
         {
             switch (type)
             {
-                case ViewType.Complete: return new Complete();
+                case ViewType.Complete: return new Complete(resizeWindow);
 
-                case ViewType.Simple: return new Simple();
+                case ViewType.Basic: return new Basic(resizeWindow);
 
-                case ViewType.None: return new None();
+                case ViewType.None: return new None(resizeWindow);
 
                 default: throw new ArgumentOutOfRangeException();
             }
@@ -56,7 +56,7 @@ namespace ControllerCli.View
         protected InputState InputState { get; set; }
         protected BatteryState BatteryState { get; set; }
         protected String _view { get; set; }
-   
+
         protected virtual void ReadControllerState(Controller state)
         {
             RefreshRate = state.Synchronizer.RefreshRate;

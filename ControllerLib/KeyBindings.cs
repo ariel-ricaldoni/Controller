@@ -68,6 +68,6 @@ namespace ControllerLib
         public IButtonInput RTButton { get; set; } = new KeyboardKeyInput(KeyboardKeyCode.Alt);
 
         public IButtonInput StartButton { get; set; } = new KeyboardKeyInput(KeyboardKeyCode.Windows);
-        public IButtonInput BackButton { get; set; } = new KeyboardMacroInput(KeyboardMacro.OnScreenKeyboard);
+        public IButtonInput BackButton { get; set; } = new KeyboardKeyInput();
     }
 }

@@ -82,7 +82,7 @@ namespace ControllerLib
         public Gamepad Gamepad { get; private set; }
         public Mouse Mouse { get; private set; }
         public Keyboard Keyboard { get; private set; }
-        
+
         public void Invoke(Action view)
         {
             ApplyCurrentKeyBinding();
@@ -121,17 +121,17 @@ namespace ControllerLib
             ApplyProperties(keyBinding);
             ApplyEvents(keyBinding);
         }
-    
+
         private void ApplyProperties(KeyBinding keyBinding)
         {
             Synchronizer.TargetRefreshRate = keyBinding.TargetRefreshRate;
 
             Gamepad.KeyDownDelay = keyBinding.KeyDownDelay;
-            
+
             Mouse.CursorMaxSpeed = keyBinding.CursorMaxSpeed;
             Mouse.ScrollSpeedMultiplier = keyBinding.ScrollSpeedMultiplier;
-            
-            Keyboard.KeyDownDelay = keyBinding.KeyDownDelay;                    
+
+            Keyboard.KeyDownDelay = keyBinding.KeyDownDelay;
         }
         private void ApplyEvents(KeyBinding keyBinding)
         {

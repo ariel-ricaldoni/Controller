@@ -1,6 +1,7 @@
 ﻿using ControllerLib.Driver;
 using ControllerLib.Input;
 using System;
+using System.Collections.Generic;
 
 namespace ControllerLib.Output
 {
@@ -110,18 +111,6 @@ namespace ControllerLib.Output
         F10 = 0x79,
         F11 = 0x7A,
         F12 = 0x7B,
-        F13 = 0x7C,
-        F14 = 0x7D,
-        F15 = 0x7E,
-        F16 = 0x7F,
-        F17 = 0x80,
-        F18 = 0x81,
-        F19 = 0x82,
-        F20 = 0x83,
-        F21 = 0x84,
-        F22 = 0x85,
-        F23 = 0x86,
-        F24 = 0x87,
 
         NumLock = 0x90,
         ScrollLock = 0x91,
@@ -141,10 +130,6 @@ namespace ControllerLib.Output
         ExtendedKey = 0x0001,
         KeyDown = 0,
         KeyUp = 0x0002
-    }
-    public enum KeyboardMacro
-    {
-        OnScreenKeyboard
     }
     public enum ExtendedKeyCode
     {
@@ -218,13 +203,17 @@ namespace ControllerLib.Output
         {
             KeyDown = 0;
         }
-    
+
         private Int32 _keyDownDelay = DefaultKeyDownDelay;
         private IUser32 _driver { get; set; }
     }
 
     public class KeyboardKeyInput : IButtonInput
     {
+        public KeyboardKeyInput()
+        {
+
+        }
         public KeyboardKeyInput(KeyboardKeyCode keyCode)
         {
             KeyCode = (UInt16)keyCode;
@@ -238,12 +227,18 @@ namespace ControllerLib.Output
     }
     public class KeyboardMacroInput : IButtonInput
     {
-        public KeyboardMacroInput(KeyboardMacro macro)
+        public KeyboardMacroInput(IEnumerable<KeyboardKeyCode> keyCodes)
         {
-            Macro = macro;
+            var keyboardKeyInputs = new HashSet<KeyboardKeyInput>();
+            foreach (var keyCode in keyCodes)
+            {
+                keyboardKeyInputs.Add(new KeyboardKeyInput(keyCode));
+            }
+
+            KeyboardKeyInputs = keyboardKeyInputs;
         }
 
-        public KeyboardMacro Macro { get; set; }
+        public IEnumerable<KeyboardKeyInput> KeyboardKeyInputs { get; set; }
     }
     public class DirectionalKeysInput : IAnalogInput
     {

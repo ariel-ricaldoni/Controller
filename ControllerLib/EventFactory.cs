@@ -113,10 +113,6 @@ namespace ControllerLib
             {
                 return MouseEventHandler(input as MouseKeyInput, mouse);
             }
-            else if (input is MouseMacroInput)
-            {
-                return MouseMacroEventHandler(input as MouseMacroInput);
-            }
             else if (input is KeyboardKeyInput)
             {
                 return KeyboardEventHandler(input as KeyboardKeyInput, keyboard);
@@ -136,10 +132,7 @@ namespace ControllerLib
             return (stateX, stateY, previousStateX, previousStateY) =>
             {
                 var speedX = mouse.GetCursorSpeed(stateX, Gamepad.MinAnalogLimit, Gamepad.MinAnalogDeadzone, Gamepad.MaxAnalogLimit, Gamepad.MaxAnalogDeadzone);
-                var speedY = mouse.GetCursorSpeed(stateY, Gamepad.MinAnalogLimit, Gamepad.MinAnalogDeadzone, Gamepad.MaxAnalogLimit, Gamepad.MaxAnalogDeadzone);
-
-                speedX = input.InvertX ? -speedX : speedX;
-                speedY = input.InvertY ? speedY : -speedY;
+                var speedY = -mouse.GetCursorSpeed(stateY, Gamepad.MinAnalogLimit, Gamepad.MinAnalogDeadzone, Gamepad.MaxAnalogLimit, Gamepad.MaxAnalogDeadzone);
 
                 if (speedX != 0 || speedY != 0)
                 {
@@ -152,8 +145,6 @@ namespace ControllerLib
             return (stateX, stateY, previousStateX, previousStateY) =>
             {
                 var speed = mouse.GetCursorSpeed(stateY, Gamepad.MinAnalogLimit, Gamepad.MinAnalogDeadzone, Gamepad.MaxAnalogLimit, Gamepad.MaxAnalogDeadzone) * keyBindings.Current.ScrollSpeedMultiplier;
-
-                speed = input.InvertY ? -speed : speed;
 
                 if (speed != 0)
                 {
@@ -214,14 +205,6 @@ namespace ControllerLib
                 }
             };
         }
-        private ButtonEventHandler MouseMacroEventHandler(MouseMacroInput input)
-        {
-            switch (input.Macro)
-            {
-                default:
-                    return default;
-            }
-        }
         private ButtonEventHandler KeyboardEventHandler(KeyboardKeyInput input, Keyboard keyboard)
         {
             return (statePressed, previousStatePressed) =>
@@ -242,32 +225,23 @@ namespace ControllerLib
         }
         private ButtonEventHandler KeyboardMacroEventHandler(KeyboardMacroInput input, Gamepad gamepad, Keyboard keyboard)
         {
-            switch (input.Macro)
-            {
-                case KeyboardMacro.OnScreenKeyboard:
-                    return OnScreenKeyboardEventHandler(input, gamepad, keyboard);
-
-                default:
-                    return default;
-            }
-        }
-        private ButtonEventHandler OnScreenKeyboardEventHandler(KeyboardMacroInput input, Gamepad gamepad, Keyboard keyboard)
-        {
             return (statePressed, previousStatePressed) =>
             {
-                if (!statePressed && previousStatePressed && gamepad.InputState.ButtonPressCount == 0 && gamepad.PreviousInputState.ButtonPressCount == 1)
+                if (statePressed && !previousStatePressed)
                 {
-                    var windowsKey = new KeyboardKeyInput(KeyboardKeyCode.Windows);
-                    var ctrlKey = new KeyboardKeyInput(KeyboardKeyCode.Ctrl);
-                    var oKey = new KeyboardKeyInput(KeyboardKeyCode.O);
-
-                    keyboard.Press(windowsKey);
-                    keyboard.Press(ctrlKey);
-                    keyboard.Press(oKey);
-
-                    keyboard.Release(windowsKey);
-                    keyboard.Release(ctrlKey);
-                    keyboard.Release(oKey);
+                    foreach (var key in input.KeyboardKeyInputs)
+                    {
+                        keyboard.Press(key);
+                    }
+                    keyboard.ResetKeyDown();
+                }
+                else if (!statePressed && previousStatePressed)
+                {
+                    foreach (var key in input.KeyboardKeyInputs)
+                    {
+                        keyboard.Release(key);
+                    }
+                    keyboard.ResetKeyDown();
                 }
             };
         }

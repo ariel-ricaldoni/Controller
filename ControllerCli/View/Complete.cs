@@ -5,6 +5,14 @@ namespace ControllerCli.View
 {
     public class Complete : View
     {
+        public Complete(Boolean resizeWindow = false)
+        {
+            if (resizeWindow)
+            {
+                try { Console.CursorVisible = false; Console.SetWindowSize(60, 27); Console.SetBufferSize(60, 27); } catch { }
+            }
+        }
+
         protected override void WriteConnectedState()
         {
             var BATTERY = String.Empty; var BATTERY_______ = String.Empty;
@@ -61,10 +69,10 @@ namespace ControllerCli.View
        {LT_}         +{BATTERY_______}+         {RT_}      
       {LT__}                                    {RT__}     
                                                            
-      {LB______}    _______      _______    {RB______}     
-   /  {LB______}  \         0000         /  {RB______}  \  
-  /                \       000000       /                \ 
- /       {M}        \ _____ 0000 _____ /        {Y}       \
+      {LB______}                            {RB______}     
+      {LB______}                            {RB______}     
+                                                           
+         {M}                                    {Y}        
        00{M}00                                  {Y}        
      {I} {Q} {O}       {K}        {S}       {X}     {B}    
      {I} {Q} {O}       {K}        {S}       {X}     {B}    

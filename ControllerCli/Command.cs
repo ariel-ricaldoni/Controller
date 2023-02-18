@@ -9,12 +9,10 @@ namespace ControllerCli
         public Command(Configuration configuration, IView view)
         {
             Configuration = configuration;
-
-            _view = view;
+            View = view;
         }
 
         public Boolean OnException { get { return _exception != null; } }
-        public Configuration Configuration { get; private set; }
 
         public void Execute()
         {
@@ -32,30 +30,34 @@ namespace ControllerCli
             }
         }
 
-        private IView _view { get; set; }
+        protected Configuration Configuration { get; private set; }
+        protected IView View { get; private set; }
+
         private Exception _exception;
-   
+
         private void ExecutionStarted()
         {
+            Console.WriteLine($"{Message.ControllerNameAndVersion}{Environment.NewLine}");
+
             var controller = new Controller(Configuration.KeyBindings);
 
-            _view.Refresh(controller);
+            View.Refresh(controller);
 
             controller.Invoke(() =>
             {
                 if (controller.Gamepad.StateChanged)
                 {
-                    _view.Refresh(controller);
+                    View.Refresh(controller);
                 }
             });
         }
         private void ExecutionEnded()
         {
-            _view.Clear();
+            View.Clear();
 
             if (OnException)
             {
-                Console.WriteLine($"{Message.AnErrorOccurred}{_exception.ToString()}");
+                Console.WriteLine($"{Message.AnErrorOccurred}{_exception}");
 
                 Console.WriteLine(Message.PressAnyKeyToExit);
                 Console.ReadLine();
